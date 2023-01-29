@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+</head>  
+<style>
+    body{
+        background-image: url(https://img.freepik.com/free-photo/abstract-smooth-dark-blue-with-black-vignette-studio-well-use-as-backgroundbusiness-reportdigitalwebsite-templatebackdrop_1258-108850.jpg?w=1380&t=st=1674813385~exp=1674813985~hmac=81c09b8ab65635403b3e84b657cb3d5846f8444a6f9b8a729380dbb13100110e);
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+</style>
+<body>
+    <div class="container mt-5 mb-5">
+        <h1 class="text-center alert alert-danger"> CRUD Operation for Ecommerce</h1>
+        <div class="row">
+            <div class="col-sm-4">
+                <h3 class="text-center alert alert-success">Add new Product</h3>
+                <form action="" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{form.as_p}}                     <!-- it will render the form fields(Add Product) one by one--> 
+                    <input type="submit" class="btn btn-success" value="Add Product">
+                </form>
+            </div>
+            <div class="col-sm-7 offset-1">
+                <h3 class="text-center alert alert-primary">Product Table</h3>
+                {% if stu %}            <!-- it will show table only is any data is presented in database -->
+                <table class="table text-center table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Categeory</th>
+                            <th scope="col">Price(Rs)</th>
+                            <th scope="col">Details</th>
+                            <th scope="col">Images</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for st in stu %}   <!-- it will render the data present in the database one by one -->
+                        <tr>
+                            <th scope="row">{{st.id}}</th>
+                            <td>{{st.name}}</td>
+                            <td>{{st.categeory}}</td>
+                            <td>{{st.price}}</td>
+                            <td>{{st.details}}</td>
+                            <td>
+                                <img src="{{st.image}}" alt="" class="img-fluid">
+                            </td>
+                            <td>
+                                <a href="{% url 'edit' st.id%}" class="btn btn-warning btn-sm">Edit</a><br><br> <!-- we have used dynamic URL here -->
+                                <form action="{% url 'delete' st.id%}" method="POST" class="d-inline ">
+                                    {% csrf_token %}
+                                    <input type="submit" class="btn btn-danger"
+                                        value="Delete">
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <h4 class="text-center alert alert-warning">No Record</h4>
+                {% endif %}
+                <div text-center>
+                    {% if stu %}  <!-- Pagination will only occur we there is more then 2 data -->
+                    <nav aria-label="...">
+                        <ul class="pagination text-center">
+                            {% if stu.has_previous %}  <!-- it will be only visible if there is any previous page -->
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{stu.previous_page_number}}"
+                                    tabindex="-1">Previous</a>
+                            </li>
+                            {% endif %}
+
+                            {% for n in totalpage %}   <!-- this block will render all the pages in Screen -->
+                            <li class="page-item"><a class="page-link" href="?page={{n}}">{{n}}</a></li>
+                            {% endfor %}
+
+                            {% if stu.has_next %}  <!-- it will be only visible if there is any next page -->
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{stu.next_page_number}}">Next</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{totalPages}}">Last</a> 
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
